@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
 })
 export class LoginService {
 
-  private url = 'http://localhost:5000/api/auth'; // your auth backend
+  private url = 'https://id-clinic-backend.onrender.com/api/auth'; // your auth backend
 
   constructor(private http: HttpClient) {}
 

@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 
 export class AppointmentService {
-  private url = 'http://localhost:5000/api/appointments';
+  private url = 'https://id-clinic-backend.onrender.com/api/appointments';
 
   constructor(private http: HttpClient) {}
 
