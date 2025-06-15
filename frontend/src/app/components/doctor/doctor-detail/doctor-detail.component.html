@@ -1,0 +1,85 @@
+<div class="container mt-4">
+  <h3>Doctor Details</h3>
+  <hr />
+
+  <div *ngIf="isLoading">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="doctor">
+    <p><strong>Name:</strong> {{ doctor.name }}</p>
+    <p><strong>Specialization:</strong> {{ doctor.specialization }}</p>
+    <p><strong>Phone:</strong> {{ doctor.phone }}</p>
+  </div>
+
+  <button class="btn btn-secondary mb-4" (click)="goBack()">Back</button>
+
+  <div *ngIf="filteredAppointments.length > 0" class="container mb-5">
+    <h4>Your Appointments</h4>
+
+    <!-- Date filter input + Clear button -->
+    <div class="mb-3 d-flex justify-content-end align-items-center gap-2">
+      <label for="filterDate" class="form-label mb-0 me-2">Filter by Date:</label>
+      <input
+        type="date"
+        id="filterDate"
+        class="form-control"
+        style="max-width: 200px;"
+        [(ngModel)]="filterDate"
+        (change)="applyDateFilter()"
+      />
+      <button class="btn btn-outline-secondary" (click)="clearDateFilter()">Clear Filter</button>
+    </div>
+
+    <table class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>Patient Name</th>
+          <th>Date & Time</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appt of filteredAppointments">
+          <td>{{ appt.patientName }}</td>
+          <td>{{ appt.dateTime | date: 'short' }}</td>
+          <td>{{ appt.reason }}</td>
+          <td *ngIf="selectedAppointment?._id !== appt._id">{{ appt.status }}</td>
+          <td *ngIf="selectedAppointment?._id === appt._id">
+            <select [(ngModel)]="selectedAppointment.status" class="form-select">
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </td>
+          <td>
+            <button
+              *ngIf="selectedAppointment?._id !== appt._id"
+              class="btn btn-sm btn-primary"
+              (click)="editAppointmentStatus(appt)"
+            >
+              Edit
+            </button>
+
+            <div *ngIf="selectedAppointment?._id === appt._id">
+              <button
+                class="btn btn-sm btn-success me-1"
+                (click)="updateAppointmentStatus()"
+              >
+                Update
+              </button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!isLoading && filteredAppointments.length === 0 && !error" class="text-muted">
+    <p>No appointments found for this doctor.</p>
+  </div>
+</div>

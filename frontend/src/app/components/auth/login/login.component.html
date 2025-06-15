@@ -1,0 +1,50 @@
+<div class="container mt-4" style="max-width: 500px;">
+  <h3 class="text-center">Login</h3>
+  <hr>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+
+    <div class="mb-3">
+      <label for="email">Email</label>
+        <input
+        type="email"
+        id="email"
+        name="email"
+        class="form-control"
+        [(ngModel)]="loginData.email"
+        required
+        #email="ngModel"
+        placeholder="Enter your email"
+        />
+    </div>
+
+    <div class="mb-3">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        class="form-control"
+        [(ngModel)]="loginData.password"
+        required
+        #password="ngModel"
+        placeholder="Enter your password"
+      />
+      <div *ngIf="password.invalid && password.touched" class="text-danger mt-1">
+        Password is required
+      </div>
+    </div>
+
+    <button
+      type="submit"
+      class="btn btn-primary w-100"
+      [disabled]="loginForm.invalid"
+    >
+      Login
+    </button>
+  </form>
+</div>

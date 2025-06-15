@@ -1,0 +1,93 @@
+<div class="container mt-4" style="max-width: 800px;" id="prescription-template" *ngIf="!isLoading && prescription">
+
+  <!-- Header with Logo and Clinic Info -->
+  <div class="row align-items-center mb-3">
+    <div class="col-1 text-start">
+      <img src="assets/images/iD.png" alt="Clinic Logo" style="max-width: 100px;" />
+    </div>
+
+    <div class="col-11 text-center">
+      <h3>iD Medical Consultation Center</h3>
+      <p>Bus Stand Road, Kumbakonam</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Patient & Doctor Info -->
+  <div class="row justify-content-between align-items-start mb-4">
+    <div class="col-md-6">
+      <p><strong>Name:</strong> {{ prescription.patient?.name }}</p>
+      <p><strong>Age:</strong> {{ prescription.patient?.age }}</p>
+      <p><strong>Gender:</strong> {{ prescription.patient?.gender }}</p>
+    </div>
+    <div class="col-md-4 text-md-end text-start mt-3 mt-md-0">
+      <p><strong>Date:</strong> {{ prescription.date_prescribed | date }}</p>
+      <p><strong>Doctor:</strong> {{ prescription.doctor?.name }} — {{ prescription.doctor?.specialization }}</p>
+    </div>
+  </div>
+
+  <!-- Eye Prescription -->
+  <hr *ngIf="prescription.left_eye || prescription.right_eye">
+  <div *ngIf="prescription.left_eye || prescription.right_eye">
+    <div class="text-center">
+      <img src="assets/images/specs.png" alt="Transparent Glasses" width="60%" />
+    </div>
+    <div class="row mt-4 justify-content-center">
+      <div class="col">
+        <h5>Left Eye</h5>
+        <div class="container" style="margin: 1em;">
+          <p><strong>Sphere:</strong> {{ prescription.left_eye?.sphere }}</p>
+          <p><strong>Cylinder:</strong> {{ prescription.left_eye?.cylinder }}</p>
+          <p><strong>Axis:</strong> {{ prescription.left_eye?.axis }}</p>
+          <p><strong>Vision Left:</strong> {{ prescription.vision_left }}</p>
+          <p><strong>IOP Left:</strong> {{ prescription.iop_left }}</p>
+        </div>
+      </div>
+      <div class="col">
+        <h5>Right Eye</h5>
+        <div class="container" style="margin: 1em;">
+          <p><strong>Sphere:</strong> {{ prescription.right_eye?.sphere }}</p>
+          <p><strong>Cylinder:</strong> {{ prescription.right_eye?.cylinder }}</p>
+          <p><strong>Axis:</strong> {{ prescription.right_eye?.axis }}</p>
+          <p><strong>Vision Right:</strong> {{ prescription.vision_right }}</p>
+          <p><strong>IOP Right:</strong> {{ prescription.iop_right }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Medications -->
+  <hr *ngIf="prescription.medications?.length > 0">
+  <h5 *ngIf="prescription.medications?.length > 0">Medications</h5>
+  <div *ngFor="let med of prescription.medications" class="row mb-2">
+    <div class="col-4">{{ med.name }}</div>
+    <div class="col-2">{{ med.dosage }}</div>
+    <div class="col-3">{{ med.frequency }}</div>
+    <div class="col-2">{{ med.duration }}</div>
+  </div>
+
+  <!-- Diagnosis -->
+  <div class="mt-4">
+    <h5>Diagnosis</h5>
+    <p>{{ prescription.diagnosis }}</p>
+  </div>
+
+  <!-- Instructions -->
+  <div class="mt-4">
+    <h5>Instructions</h5>
+    <p>{{ prescription.instructions }}</p>
+  </div>
+
+  <!-- Doctor Signature -->
+  <div class="text-end mt-5">
+    <p><strong>{{ prescription.doctor?.name }}</strong></p>
+    <p>{{ prescription.doctor?.specialization }}</p>
+  </div>
+
+  <!-- Back Button -->
+  <div class="pdf-ignore mb-4">
+    <button class="btn btn-outline-dark" (click)="goBack()">← Back to Patient Details</button>
+  </div>
+
+</div>

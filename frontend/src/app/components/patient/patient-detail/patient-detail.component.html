@@ -1,0 +1,35 @@
+<div class="container mt-4" style="max-width: 600px;">
+  <div *ngIf="isLoading">Loading patient details...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+
+  <div *ngIf="!isLoading && patient">
+    <h3 class="text-center">{{ patient.name }} Details</h3> 
+    <hr />
+    <p><strong>Name:</strong> {{ patient.name }}</p>
+    <p><strong>Age:</strong> {{ patient.age }}</p>
+    <p><strong>Gender:</strong> {{ patient.gender }}</p>
+    <p><strong>Phone:</strong> {{ patient.phone }}</p>
+
+    <div class="d-flex justify-content-between mt-4">
+      <button class="btn btn-secondary" (click)="goBack()">Back</button>
+      <button class="btn btn-primary" (click)="goToAddPrescription()">+ Add Prescription</button>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-4" *ngIf="prescriptions.length" style="width: 60%;">
+  <h4>Past Prescriptions</h4>
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let p of prescriptions" style="margin-bottom: 2em;">
+      <strong>Date:</strong> {{ p.date_prescribed | date: 'shortDate' }}<br>
+      <strong>Doctor:</strong> {{ p.doctor?.name }}<br>
+      <strong>Diagnosis:</strong> {{ p.diagnosis }}<br>
+      <button class="btn btn-sm btn-outline-primary mt-2" [routerLink]="['/prescription/', p._id]">View</button>
+    </li>
+  </ul>
+</div>
+
+<div *ngIf="!prescriptions.length && !isLoading" class="container mt-4 text-muted mt-3 text-center" style="width: 60%;">
+<h4>Past Prescriptions</h4>
+  No past prescriptions found.
+</div>

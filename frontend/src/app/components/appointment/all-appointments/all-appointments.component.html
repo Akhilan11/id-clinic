@@ -1,0 +1,124 @@
+<div class="container mt-4" style="max-width: 1000px;">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0 fw-semibold">📅 All Appointments</h3>
+    <a routerLink="/appointments/add" class="btn btn-success">
+      <i class="bi bi-plus-circle me-1"></i> Add Appointment
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="mb-4 d-flex flex-wrap align-items-center gap-3">
+    <!-- Date Filter -->
+    <div class="d-flex align-items-center">
+      <label for="filterDate" class="form-label me-2 mb-0">Filter by Date:</label>
+      <input 
+        type="date"
+        id="filterDate"
+        class="form-control w-auto"
+        [(ngModel)]="filterDate"
+        (change)="filterAppointments()" />
+    </div>
+
+    <!-- Doctor Filter -->
+    <div class="d-flex align-items-center">
+      <label for="doctorFilter" class="form-label me-2 mb-0">Doctor:</label>
+      <select 
+        id="doctorFilter"
+        class="form-select w-auto"
+        [(ngModel)]="selectedDoctor"
+        (change)="filterAppointments()">
+        <option value="All">All</option>
+        <option *ngFor="let doc of doctorList" [value]="doc">{{ doc }}</option>
+      </select>
+    </div>
+
+    <!-- Clear Button -->
+    <button class="btn btn-outline-secondary ms-auto" (click)="clearFilter()">Clear</button>
+  </div>
+
+  <!-- Loading/Error -->
+  <div *ngIf="loading" class="text-center text-muted">⏳ Loading appointments...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <!-- Appointments Table -->
+  <div class="table-responsive" *ngIf="paginatedAppointments.length > 0">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Patient</th>
+          <th>Doctor</th>
+          <th>Date & Time</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let appointment of paginatedAppointments">
+          <td>{{ appointment.patientName }}</td>
+          <td>{{ appointment.doctorId?.name || 'N/A' }}</td>
+          <td>{{ appointment.dateTime | date: 'medium' }}</td>
+          <td>{{ appointment.reason || '-' }}</td>
+
+          <!-- Status -->
+          <td>
+            <ng-container *ngIf="editId === appointment._id; else showStatus">
+              <select class="form-select form-select-sm w-auto d-inline" [(ngModel)]="editStatus">
+                <option value="Pending">Pending</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </ng-container>
+
+            <ng-template #showStatus>
+              <span class="badge"
+                [ngClass]="{
+                  'bg-success': appointment.status === 'Confirmed',
+                  'bg-warning text-dark': appointment.status === 'Pending',
+                  'bg-danger': appointment.status === 'Cancelled'
+                }">
+                {{ appointment.status }}
+              </span>
+            </ng-template>
+          </td>
+
+          <!-- Actions -->
+          <td>
+            <ng-container *ngIf="editId === appointment._id; else editMode">
+              <button class="btn btn-sm btn-primary me-1" (click)="saveStatus(appointment)">Save</button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>
+            </ng-container>
+
+            <ng-template #editMode>
+              <button class="btn btn-sm btn-outline-dark" (click)="startEdit(appointment)">Edit</button>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Appointments -->
+  <div *ngIf="!loading && paginatedAppointments.length === 0" class="text-center text-muted">
+    No appointments found.
+  </div>
+
+  <!-- Pagination -->
+  <nav *ngIf="totalPages > 1" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+      </li>
+      <li 
+        class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="currentPage === i + 1">
+        <button class="page-link" (click)="changePage(i + 1)">{{ i + 1 }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+      </li>
+    </ul>
+  </nav>
+</div>

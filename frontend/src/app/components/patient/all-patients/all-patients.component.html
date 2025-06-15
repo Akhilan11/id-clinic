@@ -1,0 +1,64 @@
+
+<div class="container">
+  <!-- Heading and Add Patient button in one row -->
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <h2 style="margin: 0;">All Patients</h2>
+    <button class="btn btn-success btn-sm" style="font-weight: 500;" (click)="goToAddPatient()">
+      + Add Patient
+    </button>
+  </div>
+  <hr>
+
+  <!-- Loading/Error -->
+  <div *ngIf="isLoading" class="text-muted">Loading patients...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+
+  <!-- Patients Table -->
+  <table class="table table-bordered table-hover mt-3" *ngIf="!isLoading && patients.length">
+    <thead class="table-light">
+      <tr>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Gender</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let patient of patients">
+        <ng-container *ngIf="editingPatientId !== patient._id; else editForm">
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.age }}</td>
+          <td>{{ patient.gender }}</td>
+          <td>{{ patient.phone }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary me-1" (click)="goToPatientDetail(patient._id)">View</button>
+            <button class="btn btn-sm btn-warning me-1" (click)="startEdit(patient)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deletePatient(patient._id)">Delete</button>
+          </td>
+        </ng-container>
+
+        <ng-template #editForm> 
+          <td><input [(ngModel)]="editData.name" class="form-control form-control-sm" /></td>
+          <td><input [(ngModel)]="editData.age" type="number" class="form-control form-control-sm" /></td>
+          <td>
+            <select [(ngModel)]="editData.gender" class="form-control form-control-sm">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </td>
+          <td><input [(ngModel)]="editData.phone" class="form-control form-control-sm" /></td>
+          <td>
+            <button class="btn btn-sm btn-success me-1" (click)="updatePatient(patient._id)">Save</button>
+            <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- No Patients -->
+  <div *ngIf="!isLoading && patients.length === 0" class="text-center text-muted mt-3">
+    No patients found.
+  </div>
+</div>

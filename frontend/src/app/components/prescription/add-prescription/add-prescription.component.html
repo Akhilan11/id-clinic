@@ -1,0 +1,167 @@
+<div class="container mt-4" style="max-width: 800px;" id="prescription-template">
+
+  <!-- Header with Logo + Centered Text -->
+  <div class="d-flex align-items-center justify-content-center position-relative mb-3">
+    <!-- Logo on the Left -->
+    <img src="assets/images/iD.png" alt="Logo" style="position: absolute; left: 0; width: 70px; height: auto;" />
+    
+    <!-- Center Text -->
+    <div class="text-center w-100">
+      <h3 class="mb-0">iD Medical Consultation Center</h3>
+      <p class="mb-0">Bus Stand Road, Kumbakonam</p>
+    </div>
+  </div>
+  <hr>
+
+  <form (ngSubmit)="submitPrescription()">
+    <div class="row justify-content-between align-items-start mb-4">
+      <div class="col-md-6">
+        <div>
+          <p><strong>Name:</strong> <span class="ms-1">{{ patient.name }}</span></p>
+          <p><strong>Age:</strong> <span class="ms-1">{{ patient.age }}</span></p>
+          <p><strong>Gender:</strong> <span class="ms-1">{{ patient.gender }}</span></p>
+        </div>
+      </div>
+
+      <div class="col-md-4 text-md-end text-start mt-3 mt-md-0">
+        <input type="date" id="date_prescribed" class="form-control" [(ngModel)]="prescription.date_prescribed" name="date_prescribed">
+        <div class="form-group mt-2">
+          <label for="doctorSelect">Doctor</label>
+          <select class="form-control" id="doctorSelect" [(ngModel)]="prescription.doctor" name="doctor" required>
+            <option value="" disabled selected>Select Doctor</option>
+            <option *ngFor="let doc of doctors" [value]="doc._id">
+              {{ doc.name }} — {{ doc.specialization }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary mt-3" (click)="toggleSpecs()">
+      {{ showSpecs ? '− hide specs' : '+ add specs' }}
+    </button>
+
+    <hr>
+
+    <!-- Specs Section -->
+    <div *ngIf="showSpecs">
+      <div class="text-center">
+        <img src="assets/images/specs.png" alt="Transparent Glasses" width="60%" />
+      </div>
+
+      <div class="row mt-4">
+        <!-- Left Eye -->
+        <div class="col text-start">
+          <h5>Left Eye</h5>
+          <div class="form-group">
+            <label>Sphere</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.left_eye.sphere" name="leftSphere">
+          </div>
+          <div class="form-group mt-2">
+            <label>Cylinder</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.left_eye.cylinder" name="leftCylinder">
+          </div>
+          <div class="form-group mt-2">
+            <label>Axis</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.left_eye.axis" name="leftAxis">
+          </div>
+          <div class="form-group mt-2">
+            <label>Vision Left</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.vision_left" name="vision_left">
+          </div>
+        </div>
+
+        <!-- Right Eye -->
+        <div class="col text-start">
+          <h5>Right Eye</h5>
+          <div class="form-group">
+            <label>Sphere</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.right_eye.sphere" name="rightSphere">
+          </div>
+          <div class="form-group mt-2">
+            <label>Cylinder</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.right_eye.cylinder" name="rightCylinder">
+          </div>
+          <div class="form-group mt-2">
+            <label>Axis</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.right_eye.axis" name="rightAxis">
+          </div>
+          <div class="form-group mt-2">
+            <label>Vision Right</label>
+            <input type="text" class="form-control" [(ngModel)]="prescription.vision_right" name="vision_right">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagnosis -->
+    <div class="mb-3 mt-4">
+      <label for="diagnosisInput" class="form-label">Diagnosis</label>
+      <input type="text" id="diagnosisInput" class="form-control" [(ngModel)]="prescription.diagnosis" name="diagnosis" placeholder="Enter diagnosis" required>
+    </div>
+
+    <hr>
+    <h5>Medications</h5>
+
+    <!-- Medication Table Header -->
+    <div *ngIf="prescription.medications.length > 0" class="row fw-bold text-secondary mb-2">
+      <div class="col-4">Medicine Name</div>
+      <div class="col-2">Dosage</div>
+      <div class="col-3">Frequency</div>
+      <div class="col-2">Duration</div>
+      <div class="col-1"></div>
+    </div>
+
+    <!-- Medications List -->
+    <div *ngFor="let med of prescription.medications; let i = index" class="row mb-2">
+      <div *ngIf="!isMedInputLocked && i === prescription.medications.length - 1" class="d-flex gap-2 align-items-center">
+        <input type="text" [(ngModel)]="med.name" name="med-name-{{i}}" class="form-control" placeholder="Medication Name" style="flex: 2;" required>
+        <input type="text" [(ngModel)]="med.dosage" name="med-dosage-{{i}}" class="form-control" placeholder="Dosage" style="flex: 1;" required>
+        <input type="text" [(ngModel)]="med.frequency" name="med-frequency-{{i}}" class="form-control" placeholder="Frequency" style="flex: 1;" required>
+        <input type="text" [(ngModel)]="med.duration" name="med-duration-{{i}}" class="form-control" placeholder="Duration" style="flex: 1;" required>
+        <button type="button" class="btn btn-danger btn-sm" (click)="removeMedication(i)">Remove</button>
+      </div>
+
+      <div *ngIf="isMedInputLocked || i !== prescription.medications.length - 1" class="row">
+        <div class="col-4">{{ med.name }}</div>
+        <div class="col-2">{{ med.dosage }}</div>
+        <div class="col-3">{{ med.frequency }}</div>
+        <div class="col-2">{{ med.duration }}</div>
+        <div class="col-1 text-end">
+          <button type="button" (click)="removeMedication(i)" class="btn btn-outline-danger btn-sm pdf-ignore">×</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medication Buttons -->
+    <div class="d-flex gap-3 mt-3">
+      <button type="button" class="btn btn-success btn-sm pdf-ignore" (click)="addMedication()" [disabled]="isMedInputLocked">Add Medication</button>
+      <button *ngIf="!isMedInputLocked && prescription.medications.length > 0" type="button" class="btn btn-secondary btn-sm pdf-ignore" (click)="isMedInputLocked = true">Done Adding Medications</button>
+    </div>
+
+    <!-- Instructions -->
+    <div class="form-group mt-4">
+      <label>Instructions</label>
+      <textarea class="form-control" rows="3" [(ngModel)]="prescription.instructions" name="instructions"></textarea>
+    </div>
+
+    <!-- Doctor Signature -->
+    <div class="text-end mt-5">
+      <p><strong>{{ getSelectedDoctor()?.name }}</strong></p>
+      <p>{{ getSelectedDoctor()?.specialization }}</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="pdf-ignore">
+      <button type="submit" class="btn btn-primary mt-3">Submit Prescription</button>
+      <button type="button" class="btn btn-outline-primary mt-3 ms-2" (click)="downloadPDF()">Download PDF</button>
+    </div>
+  </form>
+
+  <!-- Back Button -->
+    <div class="pdf-ignore mb-3 text-end">
+    <button type="button" class="btn btn-outline-dark" (click)="goBack()">← Back to Patient Details</button>
+    </div>
+
+</div>
+

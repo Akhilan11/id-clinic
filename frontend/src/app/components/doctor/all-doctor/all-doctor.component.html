@@ -1,0 +1,48 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>All Doctors</h2>
+    <a routerLink="/doctors/add" class="btn btn-primary">+ Add Doctor</a>
+  </div>
+
+  <div *ngIf="isLoading">Loading doctors...</div>
+  <div *ngIf="error" class="text-danger">{{ error }}</div>
+
+  <table class="table table-bordered" *ngIf="!isLoading && doctors.length">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Specialization</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let doctor of doctors">
+        <ng-container *ngIf="editingDoctorId !== doctor._id; else editForm">
+          <td>{{ doctor.name }}</td>
+          <td>{{ doctor.specialization }}</td>
+          <td>{{ doctor.phone }}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" (click)="goToDoctorDetail(doctor._id)">View</button>
+            <button class="btn btn-sm btn-warning" (click)="startEdit(doctor)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="deleteDoctor(doctor._id)">Delete</button>
+          </td>
+        </ng-container>
+
+        <ng-template #editForm>
+          <td><input [(ngModel)]="editData.name" class="form-control" /></td>
+          <td><input [(ngModel)]="editData.specialization" class="form-control" /></td>
+          <td><input [(ngModel)]="editData.phone" class="form-control" /></td>
+          <td>
+            <button class="btn btn-sm btn-success" (click)="updateDoctor(doctor._id)">Save</button>
+            <button class="btn btn-sm btn-secondary" (click)="cancelEdit()">Cancel</button>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!isLoading && doctors.length === 0">
+    No doctors found.
+  </div>
+</div>

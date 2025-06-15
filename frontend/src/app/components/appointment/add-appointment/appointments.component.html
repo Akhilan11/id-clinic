@@ -1,0 +1,111 @@
+<div class="container mt-4" style="max-width: 600px;">
+  <h3 class="text-center mb-4">Add New Appointment</h3>
+  <hr />
+
+  <form (ngSubmit)="onSubmit()" #appointmentForm="ngForm">
+    <!-- Patient Name -->
+    <div class="mb-3">
+      <label for="patientName" class="form-label">Patient Name</label>
+      <input
+        type="text"
+        id="patientName"
+        class="form-control"
+        [(ngModel)]="appointment.patientName"
+        name="patientName"
+        required
+      />
+    </div>
+
+    <!-- Doctor Dropdown -->
+    <div class="mb-3">
+      <label for="doctorId" class="form-label">Select Doctor</label>
+      <select
+        id="doctorId"
+        class="form-select"
+        [(ngModel)]="appointment.doctorId"
+        name="doctorId"
+        required
+      >
+        <option value="" disabled selected>-- Select Doctor --</option>
+        <option *ngFor="let doc of doctors" [value]="doc._id">{{ doc.name }}</option>
+      </select>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="mb-3">
+      <label for="date" class="form-label">Select Date</label>
+      <input
+        type="date"
+        id="date"
+        class="form-control"
+        [(ngModel)]="selectedDate"
+        name="date"
+        required
+        [min]="minDate"
+        (change)="generateTimeSlots()"
+      />
+    </div>
+
+    <!-- Time Slots -->
+    <div class="mb-3" *ngIf="timeSlots.length > 0">
+      <label class="form-label">Select Time</label>
+      <div class="d-flex flex-wrap gap-2">
+        <button
+          type="button"
+          class="btn"
+          [class.btn-primary]="slot === selectedTime"
+          [class.btn-outline-primary]="slot !== selectedTime"
+          *ngFor="let slot of timeSlots"
+          (click)="selectTime(slot)"
+        >
+          {{ slot }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Reason -->
+    <div class="mb-3">
+      <label for="reason" class="form-label">Reason</label>
+      <input
+        type="text"
+        id="reason"
+        class="form-control"
+        [(ngModel)]="appointment.reason"
+        name="reason"
+      />
+    </div>
+
+    <!-- Status -->
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select
+        id="status"
+        class="form-select"
+        [(ngModel)]="appointment.status"
+        name="status"
+        required
+      >
+        <option value="Pending">Pending</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Cancelled">Cancelled</option>
+      </select>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex justify-content-between mt-4">
+      <div>
+        <button type="submit" class="btn btn-primary" [disabled]="!appointmentForm.form.valid || !selectedTime">
+          Submit
+        </button>
+        <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">
+          Reset
+        </button>
+      </div>
+
+      <!-- Back to Appointments -->
+      <a class="btn btn-outline-dark" routerLink="/appointments">
+        <i class="bi bi-arrow-left-circle me-1"></i> Back to Appointments
+      </a>
+    </div>
+  </form>
+</div>

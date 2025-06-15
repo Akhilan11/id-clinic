@@ -1,0 +1,90 @@
+<div class="container mt-4" style="max-width: 600px;">
+  <h3 class="text-center">Add New Patient</h3>
+  <hr />
+
+  <form (ngSubmit)="submitForm()" #patientForm="ngForm">
+    <div class="mb-3">
+      <label for="name" class="form-label">Name</label>
+      <input
+        type="text"
+        id="name"
+        class="form-control"
+        [(ngModel)]="patient.name"
+        name="name"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="age" class="form-label">Age</label>
+      <input
+        type="number"
+        id="age"
+        class="form-control"
+        [(ngModel)]="patient.age"
+        name="age"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="gender" class="form-label">Gender</label>
+      <select
+        id="gender"
+        class="form-control"
+        [(ngModel)]="patient.gender"
+        name="gender"
+        required
+      >
+        <option value="">-- Select --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="phone" class="form-label">Whatsapp Number</label>
+      <input
+        type="text"
+        id="phone"
+        class="form-control"
+        [(ngModel)]="patient.phone"
+        name="phone"
+        required
+      />
+    </div>
+
+    <!-- Medical History -->
+    <div class="mb-3">
+      <label class="form-label">Medical History</label>
+      <div
+        *ngFor="let history of patient.medicalHistory; let i = index; trackBy: trackByIndex"
+        class="d-flex align-items-center mb-2"
+      >
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="patient.medicalHistory[i]"
+          name="medicalHistory{{ i }}"
+          [id]="'medicalHistory' + i"
+          placeholder="Enter medical history"
+          autocomplete="off"
+          required
+        />
+        <button
+          *ngIf="patient.medicalHistory.length > 1"
+          type="button"
+          class="btn btn-outline-danger btn-sm ms-2"
+          (click)="removeMedicalHistoryEntry(i)"
+        >
+          ×
+        </button>
+      </div>
+      <button type="button" class="btn btn-outline-primary btn-sm" (click)="addMedicalHistoryEntry()">+ Add History</button>
+    </div>
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-primary" [disabled]="!patientForm.form.valid">Submit</button>
+    <button class="btn btn-secondary ms-2" (click)="goBack()" type="button">Cancel</button>
+  </form>
+</div>
